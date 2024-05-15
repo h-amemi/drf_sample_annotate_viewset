@@ -22,3 +22,12 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("blog.urls")),
 ]
+
+try:
+    import debug_toolbar
+
+    urlpatterns += [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]
+except ImportError:
+    pass
