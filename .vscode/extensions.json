@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "charliermarsh.ruff",
+        "shardulm94.trailing-spaces",
+        "ms-python.python"
+    ]
+}
