@@ -15,20 +15,20 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class PublishedPostSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(many=True, read_only=True)
+
     class Meta:
         model = PublishedPost
         fields = "__all__"
 
 
 class DraftPostSerializer(serializers.ModelSerializer):
-    has_published_post = serializers.SerializerMethodField()
+    has_published_post = serializers.BooleanField(read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
 
     class Meta:
         model = DraftPost
         fields = "__all__"
-
-    def get_has_published_post(self, obj):
-        return PublishedPost.objects.filter(title=obj.title).exists()
 
 
 class CommentSerializer(serializers.ModelSerializer):

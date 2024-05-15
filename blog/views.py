@@ -9,7 +9,7 @@ from .serializers import (
     DraftPostSerializer,
     CommentSerializer,
 )
-from django.db.models import OuterRef, Subquery, Exists
+from django.db.models import OuterRef, Subquery, Exists, Prefetch
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -23,14 +23,14 @@ class TagViewSet(viewsets.ModelViewSet):
 
 
 class PublishedPostViewSet(viewsets.ModelViewSet):
-    queryset = PublishedPost.objects.all()
+    queryset = PublishedPost.objects.all().prefetch_related("tags")
     serializer_class = PublishedPostSerializer
 
 
 class DraftPostViewSet(viewsets.ModelViewSet):
     queryset = DraftPost.objects.annotate(
         has_published_post=Exists(PublishedPost.objects.filter(title=OuterRef("title")))
-    )
+    ).prefetch_related("tags")
     serializer_class = DraftPostSerializer
 
     @action(detail=True, methods=["post"])
