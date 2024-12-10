@@ -1,15 +1,16 @@
-from rest_framework import viewsets, status
+from django.db.models import Exists, F, OuterRef
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Category, Tag, PublishedPost, DraftPost, Comment
+
+from .models import Category, Comment, DraftPost, PublishedPost, Tag
 from .serializers import (
     CategorySerializer,
-    TagSerializer,
-    PublishedPostSerializer,
-    DraftPostSerializer,
     CommentSerializer,
+    DraftPostSerializer,
+    PublishedPostSerializer,
+    TagSerializer,
 )
-from django.db.models import OuterRef, Subquery, Exists, Prefetch
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -42,11 +43,11 @@ class DraftPostViewSet(viewsets.ModelViewSet):
                 "content": draft_post.content,
                 "author": draft_post.author,
                 "category": draft_post.category,
-                "version": draft_post.version + 1 if not created else 1,
+                # Increment the version number by 1 to reflect the new version of the published post
+                "version": F("version") + 1,
             },
         )
         published_post.tags.set(draft_post.tags.all())
-        published_post.save()
         return Response({"status": "approved"}, status=status.HTTP_200_OK)
 
 

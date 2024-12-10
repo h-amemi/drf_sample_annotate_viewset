@@ -1,1 +1,1 @@
-# django_sample_4_2
+# drf_sample_annotate_viewset
